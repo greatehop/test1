@@ -2,3 +2,4 @@
 
 test1.sh filter=git-crypt diff=git-crypt
 test2.sh filter=git-crypt diff=git-crypt
+test3.sh filter=git-crypt diff=git-crypt
