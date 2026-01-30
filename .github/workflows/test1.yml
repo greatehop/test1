@@ -1,0 +1,31 @@
+name: test1Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'test1/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Detect changed paths
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            migrations:
+              - 'test1/*/migrations/**'
+
+      - name: Normal step
+        run: echo "Always runs"
+
+      - name: Run migrations-related step
+        if: steps.changes.outputs.migrations == 'true'
+        run: |
+          echo "migrations run"
