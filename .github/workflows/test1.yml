@@ -1,31 +1,47 @@
-name: test1Deploy
+name: Release Version
 
 on:
   push:
-    branches: [ "main" ]
-    paths:
-      - 'test1/**'
+    branches:
+      - main
 
 jobs:
-  deploy:
+  version:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
-
       - uses: actions/checkout@v4
-
-      - name: Detect changed paths
-        id: changes
-        uses: dorny/paths-filter@v3
         with:
-          filters: |
-            migrations:
-              - 'test1/*/migrations/**'
+          fetch-depth: 0
 
-      - name: Normal step
-        run: echo "Always runs"
+      - name: Calculate semantic version
+        id: version
+        uses: paulhatch/semantic-version@v5
+        with:
+          tag_prefix: "v"
+          branch: main
+          major_pattern: "major"
+          minor_pattern: "minor"
+          bump_each_commit: true
+          version_format: "${major}.${minor}.${patch}"
 
-      - name: Run migrations-related step
-        if: steps.changes.outputs.migrations == 'true'
+      - name: Create VERSION file
+        run: echo "${{ steps.version.outputs.version }}" > VERSION
+
+      - name: Commit VERSION file
         run: |
-          echo "migrations run"
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add VERSION
+          git commit -m "chore: release v${{ steps.version.outputs.version }}" || echo "No changes"
+          git push
+
+      - name: Create Git tag
+        run: |
+          git tag v${{ steps.version.outputs.version }}
+          git push origin v${{ steps.version.outputs.version }}
+
+      - name: Print version
+        run: echo "Released version v${{ steps.version.outputs.version }}"
