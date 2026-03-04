@@ -27,17 +27,6 @@ jobs:
           bump_each_commit: true
           version_format: "${major}.${minor}.${patch}"
 
-      - name: Create VERSION file
-        run: echo "${{ steps.version.outputs.version }}" > VERSION
-
-      - name: Commit VERSION file
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add VERSION
-          git commit -m "chore: release v${{ steps.version.outputs.version }}" || echo "No changes"
-          git push
-
       - name: Create Git tag
         run: |
           git tag v${{ steps.version.outputs.version }}
