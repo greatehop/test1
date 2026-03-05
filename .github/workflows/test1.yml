@@ -36,8 +36,6 @@ jobs:
       - name: Build
         run: |
           echo "Building app..."
-          # replace with your actual build steps
-          # e.g., go build ./... or npm ci && npm run build
 
       - name: Create Git tag
         if: success()
