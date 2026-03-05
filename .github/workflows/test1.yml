@@ -1,4 +1,4 @@
-name: Release Version
+name: Build & Release
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  version:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -14,10 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0   # REQUIRED for tags
 
-      - name: Calculate semantic version
-        id: version
+      - name: Calculate version
+        id: semver
         uses: paulhatch/semantic-version@v5.4.0
         with:
           tag_prefix: "v"
@@ -27,10 +27,24 @@ jobs:
           bump_each_commit: true
           version_format: "${major}.${minor}.${patch}"
 
-      - name: Create Git tag
+      - name: Show calculated version
         run: |
-          git tag v${{ steps.version.outputs.version }}
-          git push origin v${{ steps.version.outputs.version }}
+          echo "Next version: v${{ steps.semver.outputs.version }}"
 
-      - name: Print version
-        run: echo "Released version v${{ steps.version.outputs.version }}"
+      - name: Build
+        run: |
+          echo "Building app..."
+          # your real build here
+          # example:
+          # go build ./...
+
+      - name: Create Git tag
+        if: success()
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git tag v${{ steps.semver.outputs.version }}
+          git push origin v${{ steps.semver.outputs.version }}
+
+      - name: Done
+        run: echo "Released v${{ steps.semver.outputs.version }}"
