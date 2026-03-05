@@ -16,10 +16,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Fetch all tags
-        run: git fetch --tags origin
-
-      - name: Calculate next version
+      - name: Generate next version
         id: semver
         uses: paulhatch/semantic-version@v5.4.0
         with:
@@ -44,6 +41,4 @@ jobs:
           git config user.email "actions@github.com"
           git tag v${{ steps.semver.outputs.version }}
           git push origin v${{ steps.semver.outputs.version }}
-
-      - name: Done
-        run: echo "Released version v${{ steps.semver.outputs.version }}"
+          echo "Released version v${{ steps.semver.outputs.version }}"
