@@ -16,6 +16,9 @@ jobs:
         with:
           fetch-depth: 0   # REQUIRED for tags
 
+      - name: Fetch all tags
+        run: git fetch --tags origin
+        
       - name: Calculate version
         id: semver
         uses: paulhatch/semantic-version@v5.4.0
