@@ -10,7 +10,8 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+
       - name: Check migrations changes
         id: changes
         uses: dorny/paths-filter@v3
@@ -19,11 +20,12 @@ jobs:
             migrations:
               - 'backend/*/migrations/**'
 
-      - uses: webfactory/ssh-agent@v0.9.0
+      - uses: webfactory/ssh-agent@v0.10.0
         with:
           ssh-private-key: ${{ secrets.EC2_SECRET_SSH_KEY }}
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
+
       - name: Generate next version
         id: semver
         uses: paulhatch/semantic-version@v5.4.0
