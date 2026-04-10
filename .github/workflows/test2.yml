@@ -11,7 +11,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
+      - name: Check migrations changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            migrations:
+              - 'backend/*/migrations/**'
+
       - uses: webfactory/ssh-agent@v0.9.0
       - uses: actions/setup-node@v4
       - name: Generate next version
